@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 var Promise = require('bluebird');
 const hb = require('handlebars')
-const inlineCss = require('inline-css')
+const inlineCss = require('inline-css')               
 module.exports
 async function generatePdf(file, options, callback) {
   // we are using headless mode
@@ -13,10 +13,12 @@ async function generatePdf(file, options, callback) {
     args = options.args;
     delete options.args;
   }
-
-  const browser = await puppeteer.launch({
+  const getLaunchPath = process.env.LAUNCH_PATH ||  '/usr/bin/chromium-browser';
+  const launchOptions = {
+    ...(getLaunchPath && { executablePath: getLaunchPath }),
     args: args
-  });
+  };
+  const browser = await puppeteer.launch(launchOptions);
   const page = await browser.newPage();
 
   if(file.content) {
